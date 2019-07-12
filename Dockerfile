@@ -1,6 +1,20 @@
-FROM java
-ADD ./target/myproject-0.0.1-SNAPSHOT.jar /myproject-0.0.1-SNAPSHOT.jar
-ADD ./run.sh /run.sh
-RUN chmod a+x /run.sh
-EXPOSE 8080:8080
-CMD /run.sh
+# Start with a base image containing Java runtime
+FROM openjdk:8-jdk-alpine
+
+# Add Maintainer Info
+LABEL maintainer="andrey.stwn@gmail.com"
+
+# Add a volume pointing to /tmp
+VOLUME /tmp
+
+# Make port 8091 available to the world outside this container
+EXPOSE 8091
+
+# The application's jar file
+ARG JAR_FILE=target/myproject-0.0.1-SNAPSHOT.jar
+
+# Add the application's jar to the container
+ADD ${JAR_FILE} myproject.jar
+
+# Run the jar file 
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/myproject.jar"]
